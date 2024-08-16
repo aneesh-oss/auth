@@ -20,7 +20,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // CORS Middleware (add this code here)
 app.use(cors({
-  origin: 'https://your-render-site.com', // Replace with your Render site URL
+  origin: 'https://auth-j347.onrender.com', // Replace with your Render site URL
   credentials: true
 }));
 
