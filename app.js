@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const path = require('path');
 const session = require('express-session'); // Import express-session
+const MongoStore = require('connect-mongo');
 const authRouter = require('./routes/auth');
 const apiCheckRouter = require('./routes/apiCheck');
 require('dotenv').config(); // Load environment variables from .env file
@@ -25,8 +26,18 @@ app.use(session({
   secret: process.env.SESSION_SECRET || DEFAULT_SECRET, // Use a strong secret key
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: process.env.NODE_ENV === 'production' } // Secure cookies in production
+  store: MongoStore.create({
+      mongoUrl: process.env.MONGO_URI,
+      collectionName: 'sessions'
+  }),
+  cookie: { secure: process.env.NODE_ENV === 'production' }  // Secure cookies in production
 }));
+// app.use(session({
+//   secret: process.env.SESSION_SECRET || DEFAULT_SECRET, // Use a strong secret key
+//   resave: false,
+//   saveUninitialized: true,
+//   cookie: { secure: process.env.NODE_ENV === 'production' } // Secure cookies in production
+// }));
 
 // MongoDB Connection
 const mongoURI = process.env.MONGO_URI;
