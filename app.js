@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const path = require('path');
 const session = require('express-session'); // Import express-session
+const cors = require('cors');  // Import CORS middleware
 // const MongoStore = require('connect-mongo');
 const authRouter = require('./routes/auth');
 const apiCheckRouter = require('./routes/apiCheck');
@@ -17,6 +18,12 @@ app.use(bodyParser.json());
 // Serve static files from the "public" directory
 app.use(express.static(path.join(__dirname, 'public')));
 
+// CORS Middleware (add this code here)
+app.use(cors({
+  origin: 'https://your-render-site.com', // Replace with your Render site URL
+  credentials: true
+}));
+
 // View Engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -30,7 +37,7 @@ app.use(session({
   //     mongoUrl: process.env.MONGO_URI,
   //     collectionName: 'sessions'
   // }),
-  cookie: { secure: process.env.NODE_ENV === 'production', sameSite: 'lax', maxAge: 24 * 60 * 60 * 1000 }  // Secure cookies in production
+  cookie: { secure: process.env.NODE_ENV === 'production', httpOnly: true, sameSite: 'lax' }  // Secure cookies in production
 }));
 // app.use(session({
 //   secret: process.env.SESSION_SECRET || DEFAULT_SECRET, // Use a strong secret key

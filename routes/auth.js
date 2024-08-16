@@ -52,8 +52,9 @@ router.post('/login', async (req, res) => {
         if (user && await bcrypt.compare(loginpassword, user.loginpassword)) {
             // Set a session cookie (or use your authentication strategy)
             //res.cookie('sessionId', 'yourSessionValue', { httpOnly: true });
-            console.log('Session after login:', req.session);
+            // console.log('Session after login:', req.session);
             req.session.loginuser = loginuser;
+            console.log('Session after login:', req.session);
             
             res.redirect('/home');
         } else {
@@ -78,8 +79,14 @@ router.get('/home', (req, res) => {
 });
 
 router.get('/logout', (req, res) => {
-    req.session.destroy(); // Destroy session
-    res.redirect('/login');
+    req.session.destroy(err => {
+        if (err) {
+            console.error('Error during logout:', err);
+        }
+        res.redirect('/login');
+    });
+    // req.session.destroy(); // Destroy session
+    // res.redirect('/login');
 });
 
 module.exports = router;
