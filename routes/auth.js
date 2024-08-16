@@ -52,6 +52,7 @@ router.post('/login', async (req, res) => {
         if (user && await bcrypt.compare(loginpassword, user.loginpassword)) {
             // Set a session cookie (or use your authentication strategy)
             //res.cookie('sessionId', 'yourSessionValue', { httpOnly: true });
+            console.log('Session after login:', req.session);
             req.session.loginuser = loginuser;
             
             res.redirect('/home');

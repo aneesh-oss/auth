@@ -30,7 +30,7 @@ app.use(session({
       mongoUrl: process.env.MONGO_URI,
       collectionName: 'sessions'
   }),
-  cookie: { secure: process.env.NODE_ENV === 'production' }  // Secure cookies in production
+  cookie: { secure: process.env.NODE_ENV === 'production', sameSite: 'lax', maxAge: 24 * 60 * 60 * 1000 }  // Secure cookies in production
 }));
 // app.use(session({
 //   secret: process.env.SESSION_SECRET || DEFAULT_SECRET, // Use a strong secret key
