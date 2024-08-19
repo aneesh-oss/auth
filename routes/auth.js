@@ -36,6 +36,7 @@ router.post('/register', async (req, res) => {
     }
 });
 
+
 // router.post('/register', async (req, res) => {
 //     const { loginuser, email, loginpassword } = req.body;
 
@@ -99,10 +100,11 @@ router.post('/login', async (req, res) => {
     try {
         const user = await User.findOne({ loginuser });
         if (user && await bcrypt.compare(loginpassword, user.loginpassword)) {
-            // Set a session cookie (or use your authentication strategy)
-            //res.cookie('sessionId', 'yourSessionValue', { httpOnly: true });
-            req.session.loginuser = loginuser;
-            
+            // Create a JWT token
+            const token = jwt.sign({ loginuser: user.loginuser }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+            // Store the token in a cookie
+            res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
             res.redirect('/home');
         } else {
             res.status(401).render('login', { error: 'Invalid login credentials' });
@@ -112,6 +114,7 @@ router.post('/login', async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
+
 
 
 // Home Page
@@ -140,14 +143,16 @@ router.get('/home', (req, res) => {
 });
 
 
+
 // router.get('/logout', (req, res) => {
 //     req.session.destroy(); // Destroy session
 //     res.redirect('/login');
 // });
 router.get('/logout', (req, res) => {
-    req.session.destroy(); // Destroy session
+    res.clearCookie('token');
     res.redirect('/login');
 });
+
 
 
 module.exports = router;
