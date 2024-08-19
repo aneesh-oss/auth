@@ -6,12 +6,14 @@ const session = require('express-session'); // Import express-session
 const authRouter = require('./routes/auth');
 const apiCheckRouter = require('./routes/apiCheck');
 require('dotenv').config(); // Load environment variables from .env file
+const cookieParser = require('cookie-parser'); // Import cookie-parser
 
 const app = express();
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(cookieParser()); // Use cookie-parser middleware
 
 // Serve static files from the "public" directory
 app.use(express.static(path.join(__dirname, 'public')));
