@@ -99,11 +99,10 @@ router.post('/login', async (req, res) => {
     try {
         const user = await User.findOne({ loginuser });
         if (user && await bcrypt.compare(loginpassword, user.loginpassword)) {
-            // Create a JWT token
-            const token = jwt.sign({ loginuser: user.loginuser }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
-            // Store the token in a cookie
-            res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
+            // Set a session cookie (or use your authentication strategy)
+            //res.cookie('sessionId', 'yourSessionValue', { httpOnly: true });
+            req.session.loginuser = loginuser;
+            
             res.redirect('/home');
         } else {
             res.status(401).render('login', { error: 'Invalid login credentials' });
@@ -146,7 +145,7 @@ router.get('/home', (req, res) => {
 //     res.redirect('/login');
 // });
 router.get('/logout', (req, res) => {
-    res.clearCookie('token');
+    req.session.destroy(); // Destroy session
     res.redirect('/login');
 });
 

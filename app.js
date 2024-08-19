@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const path = require('path');
 const session = require('express-session'); // Import express-session
+const cors = require('cors');  // Import CORS middleware
+// const MongoStore = require('connect-mongo');
 const authRouter = require('./routes/auth');
 const apiCheckRouter = require('./routes/apiCheck');
 require('dotenv').config(); // Load environment variables from .env file
@@ -18,6 +20,12 @@ app.use(cookieParser()); // Use cookie-parser middleware
 // Serve static files from the "public" directory
 app.use(express.static(path.join(__dirname, 'public')));
 
+// CORS Middleware (add this code here)
+app.use(cors({
+  origin: 'https://auth-j347.onrender.com', // Replace with your Render site URL
+  credentials: true
+}));
+
 // View Engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -27,8 +35,18 @@ app.use(session({
   secret: process.env.SESSION_SECRET || DEFAULT_SECRET, // Use a strong secret key
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: process.env.NODE_ENV === 'production' } // Secure cookies in production
+  // store: MongoStore.create({
+  //     mongoUrl: process.env.MONGO_URI,
+  //     collectionName: 'sessions'
+  // }),
+  cookie: { secure: process.env.NODE_ENV === 'production', httpOnly: true, sameSite: 'lax' }  // Secure cookies in production
 }));
+// app.use(session({
+//   secret: process.env.SESSION_SECRET || DEFAULT_SECRET, // Use a strong secret key
+//   resave: false,
+//   saveUninitialized: true,
+//   cookie: { secure: process.env.NODE_ENV === 'production' } // Secure cookies in production
+// }));
 
 // MongoDB Connection
 const mongoURI = process.env.MONGO_URI;
